@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->text('description_en');
             $table->text('description_ar');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->nullOnDelete();
             $table->decimal('price', 8, 2);
             $table->timestamps();
             $table->softDeletes();
