@@ -23,7 +23,7 @@ class ResetPasswordRequest extends FormRequest
     {
         return [
             // Identifier: required, can be email or phone number
-            'identifier' => 'required|string',
+            'identifier' => 'required|array',
 
             // Code: required, exactly 4 digits
             'code' => 'required|string|size:4|regex:/^\d{4}$/',

@@ -14,7 +14,8 @@ class AuthService
     public function __construct(
         protected UserRepositoryInterface $userRepository,
         protected OtpRepositoryInterface $otpRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * Register a new user.
@@ -38,6 +39,7 @@ class AuthService
      */
     protected function sendVerificationCode(array $data): void
     {
+
         $otp = $this->otpRepository->createOtp($data);
 
         // Should be queued using Jobs
@@ -151,7 +153,7 @@ class AuthService
         $this->userRepository->incrementLoginAttempts($user);
 
         if ($user->login_attempts >= 3) {
-            $blockMinutes = rand(15, 60); 
+            $blockMinutes = rand(15, 60);
             $this->userRepository->blockUser($user, $blockMinutes);
         }
     }
@@ -181,10 +183,14 @@ class AuthService
      */
     public function forgotPassword(array $identifier): void
     {
+
         $user = $this->findUserByIdentifier($identifier);
 
         if (!$user) {
-            return; // security best practice
+            throw ValidationException::withMessages([
+                'user' => 'user not found .',
+            ]);
+            //return ; // security best practice
         }
 
         $this->sendVerificationCode($identifier);

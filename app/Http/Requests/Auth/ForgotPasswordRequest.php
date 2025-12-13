@@ -23,7 +23,7 @@ class ForgotPasswordRequest extends FormRequest
     {
         return [
             // Identifier: required, can be email or phone number
-            'identifier' => 'required|string',
+            'identifier' => 'required|array',
         ];
     }
 
