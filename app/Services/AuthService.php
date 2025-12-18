@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Notifications\SendOtpCodeToMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use App\Repositories\Contracts\OtpRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
@@ -44,7 +47,7 @@ class AuthService
 
         // Should be queued using Jobs
         if (isset($data['email'])) {
-            // Mail::to($data['email'])->send(new OtpMail($otp->code));
+             Notification::route('mail',$data['email'])->notify(new SendOtpCodeToMail( $otp->code));
         }
 
         if (isset($data['phone'])) {

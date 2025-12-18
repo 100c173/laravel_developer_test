@@ -233,8 +233,8 @@ class AuthController extends Controller
     {
         // Revoke all tokens for the authenticated user
         // Any exceptions will be caught by the global exception handler
-        $request->user()->tokens()->delete();
-
+        $this->authService->logout($request->user());
+       
         // Return success response
         return $this->success(
             message: 'auth.logout_successful',
@@ -257,7 +257,7 @@ class AuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         // Get the authenticated user
-        $user = $request->user();
+        $user = $this->authService->me($request->user());
 
         // Return success response with user profile data
         return $this->success(

@@ -8,22 +8,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Translatable\HasTranslations;
+use Str;
 
 class Product extends Model
 {
-     use SoftDeletes;
+    use SoftDeletes, HasTranslations, LogsActivity;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'title_en',
-        'title_ar',
+        'title',
         'slug',
-        'description_en',
-        'description_ar',
+        'description',
         'price',
+    ];
+
+    public $translatable = [
+        'title',
+        'description',
     ];
 
     /**
@@ -44,10 +53,55 @@ class Product extends Model
     }
 
     /**
-     * The users that the product is assigned to.
+     * Automatically generate a unique slug
+     * when creating a product.
      */
-    public function users(): BelongsTo
+    protected static function booted(): void
     {
-        return $this->belongsTo(User::class);
+        static::creating(function (Product $product) {
+            if (!empty($product->slug)) {
+                return;
+            }
+
+            /**
+             * Generate base slug from default locale.
+             */
+            $title = $product->getTranslation(
+                'title',
+                config('app.fallback_locale', 'en')
+            );
+
+            $baseSlug = Str::slug($title);
+            $slug = $baseSlug;
+            $counter = 1;
+
+            /**
+             * Ensure slug uniqueness at database level.
+             * This loop is safe and fast due to indexed column.
+             */
+            while (
+                static::where('slug', $slug)->exists()
+            ) {
+                $slug = "{$baseSlug}-{$counter}";
+                $counter++;
+            }
+
+            $product->slug = $slug;
+        });
+    }
+
+    /**
+     * Activity Log
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'title',
+                'price',
+                'slug',
+            ])
+            ->logOnlyDirty()
+            ->useLogName('product');
     }
 }

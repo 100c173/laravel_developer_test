@@ -2,12 +2,14 @@
 
 
 use App\Http\Controllers\Api\v1\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\v1\ProductController;
+
+use App\Http\Controllers\Api\v1\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes Group
 Route::prefix('auth')->group(function () {
-    
+
     Route::post('register', [AuthController::class, 'register'])
         ->name('auth.register');
 
@@ -50,7 +52,7 @@ Route::prefix('auth')->group(function () {
 
     // Protected Routes (Require Authentication)
     Route::middleware('auth:sanctum')->group(function () {
-        
+
         /**
          * GET /api/auth/me
          * Get authenticated user profile
@@ -74,19 +76,33 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-/**
- * Summary of All Endpoints:
- * 
- * PUBLIC ENDPOINTS (No Authentication Required):
- * - POST   /api/auth/register           - Register new user
- * - POST   /api/auth/verify             - Verify account with code
- * - POST   /api/auth/login              - Login with credentials
- * - POST   /api/auth/forgot-password    - Request password reset
- * - POST   /api/auth/reset-password     - Reset password with code
- * - POST   /api/auth/resend-code        - Resend verification code
- * 
- * PROTECTED ENDPOINTS (Authentication Required):
- * - GET    /api/auth/me                 - Get user profile
- * - POST   /api/auth/change-password    - Change password
- * - POST   /api/auth/logout             - Logout user
- */
+Route::prefix('users')->middleware(['auth:sanctum'])->group(function () {
+
+    // CRUD Users
+    Route::get('/', [UserController::class, 'index']);          // List users (paginated)
+    Route::post('/', [UserController::class, 'store']);         // Create user
+    Route::get('{id}', [UserController::class, 'show']);        // Show user
+    Route::put('{id}', [UserController::class, 'update']);      // Update user
+    Route::delete('{id}', [UserController::class, 'destroy']);  // Delete user
+
+    // User Actions
+    Route::post('{id}/change-password', [UserController::class, 'changePassword']);
+    Route::post('{id}/send-email', [UserController::class, 'sendEmail']);
+
+    // User Products
+    Route::get('{id}/products', [UserController::class, 'products']);
+});
+
+Route::prefix('products')->middleware(['auth:sanctum'])->group(function () {
+
+    // CRUD Products
+    Route::get('/', [ProductController::class, 'index']);          // List products
+    Route::post('/', [ProductController::class, 'store']);         // Create product
+    Route::get('{id}', [ProductController::class, 'show']);        // Show product
+    Route::put('{id}', [ProductController::class, 'update']);      // Update product
+    Route::delete('{id}', [ProductController::class, 'destroy']);  // Delete product
+
+    // Assign product to user
+    Route::post('{id}/assign-user', [ProductController::class, 'assignToUser']);
+
+});
