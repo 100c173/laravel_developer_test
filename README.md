@@ -22,32 +22,33 @@ Follow these steps to get your local environment ready:
 ```bash
 git clone <repository-url>
 cd <project-folder-name>
+```
 
 ### 2. Install Dependencies
 ```bash
 composer install
 npm install && npm run build
-
+```
 ### 2. Install Dependencies
 ```bash
 composer install
 npm install && npm run build
-
+```
 ### 3. Environment Configuration
 Create your environment file and update your database credentials:
 ```bash
 cp .env.example .env
-
+```
 > **Note:** Open the `.env` file and set your `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`.
 
 ### 4. Generate Application Key
 ```bash
 php artisan key:generate
-
+```
 ### 5. Run Database Migrations
 ```bash
 php artisan migrate
-
+```
 ---
 
 ## 🗄 Database Seeding
@@ -57,7 +58,7 @@ To populate the database with **test users** and **dummy data**, you need to run
 Run the following command:
 ```bash
 php artisan db:seed
-
+```
 ---
 
 ## 💻 Running the App
@@ -65,5 +66,5 @@ php artisan db:seed
 Start the local development server:
 ```bash
 php artisan serve
-
+```
 The application will be accessible at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
