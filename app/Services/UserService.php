@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Notifications\UserNotification;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -95,7 +96,7 @@ class UserService
     public function sendEmail(User $user, array $emailData): bool
     {
         try {
-            Mail::to($user->email)->send(new UserNotification($emailData));
+            $user->notify(new UserNotification($emailData)); 
             return true;
         } catch (\Exception $e) {
             \Log::error('Failed to send email to user: ' . $e->getMessage());
@@ -126,37 +127,7 @@ class UserService
         return $this->userRepository->getStatistics();
     }
 
-    /**
-     * Export users to CSV.
-     */
-    public function exportToCsv(array $filters = []): string
-    {
-        $users = $this->userRepository->all($filters);
-        
-        $csv = Writer::createFromFileObject(new SplTempFileObject());
-        $csv->insertOne([
-            'ID', 'Name', 'Email', 'Phone', 'Country', 'City', 
-            'Active', 'Verified', 'Blocked', 'Role', 'Created At'
-        ]);
-        
-        foreach ($users as $user) {
-            $csv->insertOne([
-                $user->id,
-                $user->name,
-                $user->email,
-                $user->phone_number,
-                $user->country,
-                $user->city,
-                $user->is_active ? 'Yes' : 'No',
-                $user->email_verified_at ? 'Yes' : 'No',
-                $user->blocked_until && Carbon::now()->lessThan($user->blocked_until) ? 'Yes' : 'No',
-                $user->getRoleNames()->first(),
-                $user->created_at->format('Y-m-d H:i:s'),
-            ]);
-        }
-        
-        return $csv->toString();
-    }
+
 
     /**
      * Activate user account.
