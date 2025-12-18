@@ -96,5 +96,8 @@ Route::get('language/{locale}', function ($locale) {
     return redirect()->back();
 })->name('language.switch');
 
+Route::get('/', function () {
+    return view('welcome');
+});
 
 require __DIR__ . '/auth.php';
