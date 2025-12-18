@@ -85,8 +85,7 @@ class DashboardProductController extends Controller
                 $editUrl = route('admin.dashboard.products.edit', $product);
                 $deleteUrl = route('admin.dashboard.products.destroy', $product);
                 $imagesUrl = route('admin.dashboard.products.images.index', $product);
-
-
+                
                 $buttons = '<div class="flex items-center justify-center gap-2">';
 
                 // زر معاينة الصور

@@ -4,13 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\City;
 use App\Models\Country;
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Str;
 
-class AdminSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -32,9 +31,9 @@ class AdminSeeder extends Seeder
             [
                 'first_name' => 'Admin',
                 'last_name' => 'User',
-                'email' => 'admin@example.com',
+                'email' => 'user@example.com',
                 'password' => Hash::make('password'), 
-                'phone_number' => '0999999999',
+                'phone_number' => '0199999999',
 
                 'is_active' => true,
                 'email_verified_at' => now(),
@@ -49,6 +48,6 @@ class AdminSeeder extends Seeder
             ]
         );
 
-        $user->assignRole('admin');
+        $user->assignRole('user');
     }
 }

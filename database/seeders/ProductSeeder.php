@@ -14,51 +14,50 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-
-
-        $products = [
+        $baseProducts = [
             [
-                'title' => [
-                    'en' => 'Wireless Headphones',
-                    'ar' => 'سماعات لاسلكية',
-                ],
-                'description' => [
-                    'en' => 'High quality wireless headphones with noise cancellation.',
-                    'ar' => 'سماعات لاسلكية عالية الجودة مع خاصية إلغاء الضوضاء.',
-                ],
+                'en' => 'Wireless Headphones',
+                'ar' => 'سماعات لاسلكية',
                 'price' => 199.99,
             ],
             [
-                'title' => [
-                    'en' => 'Smart Watch',
-                    'ar' => 'ساعة ذكية',
-                ],
-                'description' => [
-                    'en' => 'Smart watch with health tracking and notifications.',
-                    'ar' => 'ساعة ذكية لمتابعة الصحة والإشعارات.',
-                ],
+                'en' => 'Smart Watch',
+                'ar' => 'ساعة ذكية',
                 'price' => 149.50,
             ],
             [
-                'title' => [
-                    'en' => 'Gaming Keyboard',
-                    'ar' => 'لوحة مفاتيح للألعاب',
-                ],
-                'description' => [
-                    'en' => 'Mechanical keyboard designed for professional gamers.',
-                    'ar' => 'لوحة مفاتيح ميكانيكية مخصصة للاعبين المحترفين.',
-                ],
+                'en' => 'Gaming Keyboard',
+                'ar' => 'لوحة مفاتيح للألعاب',
                 'price' => 89.00,
+            ],
+            [
+                'en' => 'Bluetooth Speaker',
+                'ar' => 'مكبر صوت بلوتوث',
+                'price' => 120.00,
+            ],
+            [
+                'en' => 'Wireless Mouse',
+                'ar' => 'فأرة لاسلكية',
+                'price' => 45.99,
             ],
         ];
 
-        foreach ($products as $product) {
+        // إنشاء 30 منتج
+        for ($i = 1; $i <= 30; $i++) {
+
+            $product = $baseProducts[$i % count($baseProducts)];
 
             Product::create([
-                'title' => $product['title'],
-                'description' => $product['description'],
-                'slug' => Str::slug($product['title']['en']),
-                'price' => $product['price'],
+                'title' => [
+                    'en' => $product['en'] . " {$i}",
+                    'ar' => $product['ar'] . " {$i}",
+                ],
+                'description' => [
+                    'en' => "Description for {$product['en']} {$i}",
+                    'ar' => "وصف المنتج {$product['ar']} {$i}",
+                ],
+                'slug' => Str::slug($product['en'] . " {$i}"),
+                'price' => $product['price'] + rand(1, 50),
             ]);
         }
     }

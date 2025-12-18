@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\ChangePasswordRequest;
+use App\Http\Requests\User\SendEmailRequest;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Carbon\Carbon;
@@ -317,7 +321,7 @@ class DashboardUserController extends Controller
      */
     public function create()
     {
-        return view('admin.dashboard.users.create');
+        return view('dashboard.users.create');
     }
 
     /**

@@ -17,14 +17,8 @@ class DashboardLogController extends Controller
         return view('dashboard.activity-logs.index');
     }
 
-   /**
-     * Return DataTable JSON response for activity logs.
-     *
-     * This table is read-only:
-     * - No actions
-     * - No mutations
-     */
-        /**
+
+    /**
      * Return DataTable JSON response for activity logs.
      */
     public function datatable(Request $request)
@@ -43,7 +37,7 @@ class DashboardLogController extends Controller
                 $subjectType = class_basename($activity->subject_type);
                 $subjectId = $activity->subject_id;
                 
-                // محاولة للحصول على معلومات إضافية للموضوع
+                
                 try {
                     $subject = $activity->subject;
                     if (method_exists($subject, 'getActivityLogSubject')) {

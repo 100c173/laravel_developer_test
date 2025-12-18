@@ -278,6 +278,8 @@ class AuthController extends Controller
         );
     }
 
+    // تتتتتتتتتتتتتتتتتتتتتتتتتتتتتذكر كتابة التابع
+
     /**
      * Resend verification code.
      * Endpoint: POST /api/auth/resend-code
