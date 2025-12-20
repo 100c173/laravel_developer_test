@@ -35,7 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
         
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        /** 
+        
         $makeErrorResponse = function ($message, $data = null, int $status = 400) {
             return response()->json([
                 'success' => false,
@@ -103,5 +103,5 @@ return Application::configure(basePath: dirname(__DIR__))
                 'message' => $e->getMessage(), // for delete
             ], 500);
         });
-        */
+        
     })->create();
