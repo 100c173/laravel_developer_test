@@ -76,7 +76,7 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::prefix('users')->middleware(['auth:sanctum'])->group(function () {
+Route::prefix('users')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     // CRUD Users
     Route::get('/', [UserController::class, 'index']);          // List users (paginated)
@@ -85,6 +85,9 @@ Route::prefix('users')->middleware(['auth:sanctum'])->group(function () {
     Route::put('{id}', [UserController::class, 'update']);      // Update user
     Route::delete('{id}', [UserController::class, 'destroy']);  // Delete user
 
+});
+
+Route::prefix('users')->middleware(['auth:sanctum'])->group(function () {
     // User Actions
     Route::post('{id}/change-password', [UserController::class, 'changePassword']);
     Route::post('{id}/send-email', [UserController::class, 'sendEmail']);
@@ -93,7 +96,8 @@ Route::prefix('users')->middleware(['auth:sanctum'])->group(function () {
     Route::get('{id}/products', [UserController::class, 'products']);
 });
 
-Route::prefix('products')->middleware(['auth:sanctum'])->group(function () {
+
+Route::prefix('products')->middleware(['auth:sanctum','role:admin'])->group(function () {
 
     // CRUD Products
     Route::get('/', [ProductController::class, 'index']);          // List products
