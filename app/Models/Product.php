@@ -43,6 +43,11 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
+    public function user():BelongsTo
+    {
+        return $this->belongsTo(User::class); 
+    }
+
     /**
      * Get the primary image for the product.
      */
