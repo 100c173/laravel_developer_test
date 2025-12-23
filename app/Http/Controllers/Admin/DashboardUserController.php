@@ -83,7 +83,6 @@ class DashboardUserController extends Controller
 
                 // links 
                 $viewUrl = route('admin.dashboard.users.show', $user);
-                $editUrl = route('admin.dashboard.users.edit', $user);
                 $deleteUrl = route('admin.dashboard.users.destroy', $user);
                 $changePasswordUrl = route('admin.dashboard.users.change-password', $user);
                 $sendEmailUrl = route('admin.dashboard.users.send-email', $user);
@@ -102,10 +101,6 @@ class DashboardUserController extends Controller
                         <i class="fas fa-eye"></i>
                       </a>';
 
-                // Edit
-                $html .= '<a href="' . $editUrl . '" class="btn btn-primary" title="Edit" data-bs-toggle="tooltip">
-                        <i class="fas fa-edit"></i>
-                      </a>';
 
                 // Dropdown for more actions
                 $html .= '<div class="btn-group" role="group">
@@ -238,16 +233,6 @@ class DashboardUserController extends Controller
                             <small class="text-muted">
                                 Maximum 24 hours (1440 minutes)
                             </small>
-                        </div>
-                        <div class="mb-3">
-                            <label for="reason-' . $user->id . '" class="form-label">
-                                Reason (optional)
-                            </label>
-                            <textarea class="form-control" 
-                                      id="reason-' . $user->id . '" 
-                                      name="reason" 
-                                      rows="3" 
-                                      placeholder="Enter reason for blocking..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">

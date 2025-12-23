@@ -1,6 +1,7 @@
 @extends('dashboard.layouts.app')
 
 @section('content')
+
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -195,44 +196,43 @@
 @endsection
 
 @section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const countrySelect = document.getElementById('country_id');
-        const citySelect = document.getElementById('city_id');
-
-        countrySelect.addEventListener('change', function() {
-            const countryId = this.value;
-
-            // Clear current city options
-            citySelect.innerHTML = '<option value="">Loading cities...</option>';
-            citySelect.disabled = true;
-
+    $(document).ready(function() {
+        $('#country_id').change(function() {
+            var countryId = $(this).val();
+            var citySelect = $('#city_id');
+            
+            // Clear and disable city select
+            citySelect.html('<option value="">Loading cities...</option>');
+            citySelect.prop('disabled', true);
+            
             if (countryId) {
-                // Fetch cities for the selected country
-                fetch({{route('admin.dashboard.users.cities.by-country',$countryId)}})
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        citySelect.innerHTML = '<option value="">Select City</option>';
-                        data.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city.id;
-                            option.textContent = city.name;
-                            citySelect.appendChild(option);
+                // Direct URL without route helper
+                var url = "{{ url('admin/dashboard/users/cities') }}/" + countryId;
+                
+                // AJAX request
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        citySelect.html('<option value="">Select City</option>');
+                        
+                        $.each(data, function(key, city) {
+                            citySelect.append('<option value="' + city.id + '">' + city.name + '</option>');
                         });
-                        citySelect.disabled = false;
-                    })
-                    .catch(error => {
+                        
+                        citySelect.prop('disabled', false);
+                    },
+                    error: function(xhr, status, error) {
+                        citySelect.html('<option value="">Error loading cities</option>');
                         console.error('Error fetching cities:', error);
-                        citySelect.innerHTML = '<option value="">Error loading cities</option>';
-                    });
+                    }
+                });
             } else {
-                citySelect.innerHTML = '<option value="">Select Country First</option>';
-                citySelect.disabled = true;
+                citySelect.html('<option value="">Select Country First</option>');
+                citySelect.prop('disabled', true);
             }
         });
     });

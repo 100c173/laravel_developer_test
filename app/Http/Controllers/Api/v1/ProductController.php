@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\StoreProductRequest;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\ProductService;
@@ -39,9 +40,9 @@ class ProductController extends Controller
     /**
      * Create product
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreProductRequest $request): JsonResponse
     {
-        $product = $this->productService->create($request->all());
+        $product = $this->productService->create($request->validated());
 
         return self::success($product, 'products.created_successfully', 201);
     }
