@@ -25,8 +25,6 @@ class AuthService
      */
     public function register(array $data): User
     {
-        // Hash password before storing
-        $data['password'] = Hash::make($data['password']);
 
         // Create inactive user
         $user = $this->userRepository->create($data);
@@ -37,20 +35,26 @@ class AuthService
         return $user;
     }
 
+    public function resendCode (array $data)
+    {
+        $this->sendVerificationCode($data);
+    }
+
     /**
      * Send verification code via Email or SMS.
      */
     protected function sendVerificationCode(array $data): void
     {
-
+        
         $otp = $this->otpRepository->createOtp($data);
 
         // Should be queued using Jobs
-        if (isset($data['email'])) {
-             Notification::route('mail',$data['email'])->notify(new SendOtpCodeToMail( $otp->code));
+        if (isset($data['identifier']['email'])) {
+
+             Notification::route('mail',$data['identifier']['email'])->notify(new SendOtpCodeToMail( $otp->code));
         }
 
-        if (isset($data['phone'])) {
+        if (isset($data['identifier']['phone'])) {
             // SMS::send($data['phone'], $otp->code);
         }
     }

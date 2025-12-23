@@ -278,7 +278,6 @@ class AuthController extends Controller
         );
     }
 
-    // تتتتتتتتتتتتتتتتتتتتتتتتتتتتتذكر كتابة التابع
 
     /**
      * Resend verification code.
@@ -297,11 +296,13 @@ class AuthController extends Controller
         // Validate the request data
         // ValidationException will be caught by the global exception handler
         $validated = $request->validate([
-            'identifier' => 'required|string',
-            'channel' => 'required|in:email,sms',
+            'identifier' => ['required', 'array'],
+            'identifier.email' => ['nullable', 'email', 'required_without:identifier.phone'],
+            'identifier.phone' => ['nullable', 'string', 'required_without:identifier.email'],
         ]);
+        
 
-        // TODO: Implement resend code logic in AuthService
+        $this->authService->resendCode($validated );
         // This would require a separate method in AuthService to handle resending codes
 
         // Return success response
