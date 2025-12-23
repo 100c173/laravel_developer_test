@@ -204,6 +204,7 @@ class AuthService
      */
     public function resetPassword(array $identifier, string $code, string $newPassword): string
     {
+        
         $user = $this->findUserByIdentifier($identifier);
 
         if (!$user) {
@@ -231,14 +232,15 @@ class AuthService
      */
     protected function findUserByIdentifier(array $identifier): ?User
     {
+       
         if (isset($identifier['email'])) {
             return $this->userRepository->findByEmail($identifier['email']);
         }
-
+        
         if (isset($identifier['phone'])) {
             return $this->userRepository->findByPhone($identifier['phone']);
         }
-
+ 
         return null;
     }
 }

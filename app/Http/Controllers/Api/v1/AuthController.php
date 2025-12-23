@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginApiRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\VerifyRequest;
 use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
@@ -101,10 +101,10 @@ class AuthController extends Controller
      * - QueryException (422): If database error occurs
      * - Generic Exception (500): Any other error
      *
-     * @param LoginRequest $request The validated login request
+     * @param LoginApiRequest $request The validated login request
      * @return JsonResponse Success response with authentication token
      */
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginApiRequest $request): JsonResponse
     {
         // Authenticate user and get token
         // Any exceptions will be caught by the global exception handler
@@ -205,7 +205,7 @@ class AuthController extends Controller
             code: $request->code,
             newPassword: $request->new_password
         );
-
+       
         // Return success response with authentication token
         return $this->success(
             data: [
@@ -312,25 +312,3 @@ class AuthController extends Controller
     }
 }
 
-/**
- * AuthController Summary
- *
- * This controller is now completely free of try-catch blocks.
- * All exception handling is delegated to the global exception handler
- * defined in bootstrap/exceptions.php
- *
- * Benefits of this approach:
- * 1. Cleaner and more readable controller code
- * 2. Centralized exception handling logic
- * 3. Consistent error response format across all endpoints
- * 4. Easier to maintain and modify error handling behavior
- * 5. Automatic logging of all exceptions
- * 6. Proper HTTP status codes for each exception type
- *
- * Exception Handling Flow:
- * 1. Controller method executes service method
- * 2. If exception is thrown, it bubbles up
- * 3. Global exception handler catches it
- * 4. Exception handler returns standardized JSON response
- * 5. Response is sent to client with appropriate status code
- */

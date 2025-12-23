@@ -4,69 +4,6 @@
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
-            <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3 mb-3">
-                    <div class="card bg-gradient-primary text-white">
-                        <div class="card-body p-3">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h6 class="mb-0">Total Users</h6>
-                                    <h3 class="mb-0">{{ $stats['total'] }}</h3>
-                                </div>
-                                <div class="bg-white rounded-circle p-3">
-                                    <i class="fas fa-users text-primary fa-lg"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card bg-gradient-success text-white">
-                        <div class="card-body p-3">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h6 class="mb-0">Verified</h6>
-                                    <h3 class="mb-0">{{ $stats['verified'] }}</h3>
-                                </div>
-                                <div class="bg-white rounded-circle p-3">
-                                    <i class="fas fa-check-circle text-success fa-lg"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card bg-gradient-warning text-white">
-                        <div class="card-body p-3">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h6 class="mb-0">With Products</h6>
-                                    <h3 class="mb-0">{{ $stats['with_products'] }}</h3>
-                                </div>
-                                <div class="bg-white rounded-circle p-3">
-                                    <i class="fas fa-box text-warning fa-lg"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card bg-gradient-info text-white">
-                        <div class="card-body p-3">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h6 class="mb-0">Unverified</h6>
-                                    <h3 class="mb-0">{{ $stats['unverified'] }}</h3>
-                                </div>
-                                <div class="bg-white rounded-circle p-3">
-                                    <i class="fas fa-times-circle text-info fa-lg"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Main Card -->
             <div class="card">
@@ -95,38 +32,6 @@
                                         <i class="fas fa-filter me-2"></i>
                                         Filter Users
                                     </h6>
-                                    <div class="row g-3">
-                                        <div class="col-md-3">
-                                            <select id="filter-verified" class="form-select form-select-sm">
-                                                <option value="">All Verification Status</option>
-                                                <option value="1">Verified Only</option>
-                                                <option value="0">Unverified Only</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <select id="filter-country" class="form-select form-select-sm">
-                                                <option value="">All Countries</option>
-                                                @foreach($stats['by_country'] as $country)
-                                                    <option value="{{ $country['country'] }}">{{ $country['country'] }} ({{ $country['total'] }})</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <select id="filter-role" class="form-select form-select-sm">
-                                                <option value="">All Roles</option>
-                                                <option value="Admin">Admin</option>
-                                                <option value="User">User</option>
-                                                <option value="Editor">Editor</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <select id="filter-has-products" class="form-select form-select-sm">
-                                                <option value="">All Users</option>
-                                                <option value="1">With Products</option>
-                                                <option value="0">Without Products</option>
-                                            </select>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -169,13 +74,6 @@ $(document).ready(function() {
         serverSide: true,
         ajax: {
             url: "{{ route('admin.dashboard.users.datatable') }}",
-            data: function(d) {
-                d.verified = $('#filter-verified').val();
-                d.country = $('#filter-country').val();
-                d.city = $('#filter-city').val();
-                d.role = $('#filter-role').val();
-                d.has_products = $('#filter-has-products').val();
-            }
         },
         columns: [
             { data: 'id' },

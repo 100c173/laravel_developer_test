@@ -11,10 +11,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'role:admin'])->prefix('admin/dashboard')->name('admin.dashboard.')->group(function () {
 
     // admin/dashboard
-    Route::get('/', function () {
-        return view('dashboard.index');
-    })->name('index');
+    Route::get('/', [DashboardController::class, 'index'])->name('index');
 
+    Route::get('/product-chart', [DashboardController::class, 'productChart'])->name('products-chart');
 
     // admin/dashboard/products
     Route::prefix('products')
@@ -44,7 +43,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/dashboard')->name('admi
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [DashboardUserController::class, 'index'])->name('index');
         Route::get('/datatable', [DashboardUserController::class, 'datatable'])->name('datatable');
-        Route::get('/export', [DashboardUserController::class, 'export'])->name('export');
 
         Route::get('/create', [DashboardUserController::class, 'create'])->name('create');
         Route::post('/', [DashboardUserController::class, 'store'])->name('store');
@@ -68,12 +66,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/dashboard')->name('admi
         Route::get('/{user}/send-email', [DashboardUserController::class, 'sendEmailForm'])->name('send-email');
         Route::post('/{user}/send-email', [DashboardUserController::class, 'sendEmail'])->name('send-email.send');
 
+        Route::get('/cities/{country}', [DashboardUserController::class, 'getCities'])
+            ->name('cities.by-country');
+
         Route::get('/{user}/products', [DashboardUserController::class, 'getProducts'])->name('products');
     });
 });
 
 
-Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin/dashboard')->name('admin.dashboard.')->group(function(){
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin/dashboard')->name('admin.dashboard.')->group(function () {
     Route::get('/activity-logs', [DashboardLogController::class, 'index'])->name('activity-logs.index');
     Route::get('/activity-logs/datatable', [DashboardLogController::class, 'datatable'])->name('activity-logs.datatable');
 });

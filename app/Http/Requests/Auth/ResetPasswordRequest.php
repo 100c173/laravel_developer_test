@@ -23,7 +23,9 @@ class ResetPasswordRequest extends FormRequest
     {
         return [
             // Identifier: required, can be email or phone number
-            'identifier' => 'required|array',
+            'identifier' => ['required', 'array'],
+            'identifier.email' => ['nullable', 'email', 'required_without:identifier.phone'],
+            'identifier.phone' => ['nullable', 'string', 'required_without:identifier.email'],
 
             // Code: required, exactly 4 digits
             'code' => 'required|string|size:4|regex:/^\d{4}$/',

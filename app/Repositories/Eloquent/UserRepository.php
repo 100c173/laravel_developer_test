@@ -119,6 +119,9 @@ class UserRepository implements UserRepositoryInterface
         $user->update([
             'password' => Hash::make($newPassword),
         ]);
+
+        //Delete all token , User must login again 
+        $user->tokens()->delete();
     }
 
     /**
@@ -164,55 +167,7 @@ class UserRepository implements UserRepositoryInterface
         return $this->model->role($role)->get();
     }
 
-    /**
-     * Get users statistics.
-     */
-    public function getStatistics(): array
-    {
-        return [
-            'total' => $this->model->count(),
-            'active' => $this->model->where('is_active', true)->count(),
-            'inactive' => $this->model->where('is_active', false)->count(),
-            'verified' => $this->model->whereNotNull('email_verified_at')->count(),
-            'unverified' => $this->model->whereNull('email_verified_at')->count(),
-            'blocked' => $this->model->whereNotNull('blocked_until')
-                ->where('blocked_until', '>', Carbon::now())
-                ->count(),
-            'with_products' => $this->model->has('products')->count(),
 
-            // استخدام العلاقات مع جدول countries
-            'by_country' => $this->model->with('country')
-                ->select('country_id', DB::raw('count(*) as total'))
-                ->whereNotNull('country_id')
-                ->groupBy('country_id')
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'country' => $item->country->name ?? 'Unknown',
-                        'country_id' => $item->country_id,
-                        'total' => $item->total
-                    ];
-                })
-                ->toArray(),
-
-            
-            'by_city' => $this->model->with('city')
-                ->select('city_id', DB::raw('count(*) as total'))
-                ->whereNotNull('city_id')
-                ->groupBy('city_id')
-                ->take(10)
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'city' => $item->city->name ?? 'Unknown',
-                        'city_id' => $item->city_id,
-                        'country' => $item->city->country->name ?? 'Unknown',
-                        'total' => $item->total
-                    ];
-                })
-                ->toArray(),
-        ];
-    }
 
     /**
      * Count users by city.

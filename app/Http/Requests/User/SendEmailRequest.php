@@ -11,7 +11,7 @@ class SendEmailRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,26 @@ class SendEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|min:10',
+            'action_url' => 'nullable|url|max:500',
+            'action_text' => 'nullable|string|max:50',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'action_url' => 'action URL',
+            'action_text' => 'action button text',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'message.min' => 'The message must be at least 10 characters.',
+            'action_url.url' => 'Please enter a valid URL for the action link.',
         ];
     }
 }

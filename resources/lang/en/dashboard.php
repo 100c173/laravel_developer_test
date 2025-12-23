@@ -28,7 +28,6 @@ return [
     'verified_users' => 'Verified Users',
     'total_products' => 'Total Products',
     'new_users_last_month' => 'New Users (Last Month)',
-    'platform_uptime' => 'Platform Uptime',
     
     // User dropdown
     'language' => 'Language',

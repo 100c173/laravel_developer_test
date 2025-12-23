@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -43,9 +45,9 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class); 
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -55,6 +57,18 @@ class Product extends Model
     {
         // This relationship will return the first image marked as primary.
         return $this->hasOne(ProductImage::class)->where('is_primary', true);
+    }
+
+    public function scopeCountLastWeekPerDay($query)
+    {
+        return $query
+            ->whereBetween('created_at', [
+                Carbon::now()->subDays(6)->startOfDay(),
+                Carbon::now()->endOfDay(),
+            ])
+            ->selectRaw('COUNT(*) as total, DATE(created_at) as date')
+            ->groupBy('date')
+            ->orderBy('date');
     }
 
     /**

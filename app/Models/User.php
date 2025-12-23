@@ -30,6 +30,7 @@ class User extends Authenticatable
         'email',
         'phone_number',
         'is_active',
+        'email_verified_at',
         'country_id',
         'city_id',
         'login_attempts',
@@ -104,6 +105,11 @@ class User extends Authenticatable
     public function scopeVerified($query)
     {
         return $query->whereNotNull('email_verified_at');
+    }
+
+    public function scopeCreatedLastMonth($query)
+    {
+        return $query->where('created_at', '>=', now()->subMonth());
     }
 
     public function getActivitylogOptions(): LogOptions

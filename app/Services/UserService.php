@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Notifications\PasswordChangedNotification;
 use App\Notifications\UserNotification;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -35,7 +37,7 @@ class UserService
     /**
      * Create new user.
      */
-    public function createUser(array $data): User
+    public function  createUser(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
         $data['is_active'] = $data['is_active'] ?? true;
@@ -87,6 +89,7 @@ class UserService
     public function changePassword(User $user, string $password): bool
     {
         $this->userRepository->updatePassword($user, $password);
+        $user->notify(new PasswordChangedNotification());
         return true;
     }
 
@@ -118,15 +121,6 @@ class UserService
             'average_price' => $products->avg('price') ?? 0,
         ];
     }
-
-    /**
-     * Get users statistics.
-     */
-    public function getStatistics(): array
-    {
-        return $this->userRepository->getStatistics();
-    }
-
 
 
     /**

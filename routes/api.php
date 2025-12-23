@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\ProductController;
 
 use App\Http\Controllers\Api\v1\UserController;
+use App\Models\Country;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes Group
@@ -110,3 +111,4 @@ Route::prefix('products')->middleware(['auth:sanctum','role:admin'])->group(func
     Route::post('{id}/assign-user', [ProductController::class, 'assignToUser']);
 
 });
+

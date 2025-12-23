@@ -30,7 +30,6 @@ interface UserRepositoryInterface
     public function all(array $filters = []): Collection;
     public function paginate(array $filters = [], int $perPage = 15): LengthAwarePaginator;
     public function getByRole(string $role): Collection;
-    public function getStatistics(): array;
     public function countByVerificationStatus(bool $verified): int;
     public function countByCountry(?string $country = null): int;
     public function countByCity(?string $city = null): int;

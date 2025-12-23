@@ -7,9 +7,12 @@ use App\Http\Requests\User\ChangePasswordRequest;
 use App\Http\Requests\User\SendEmailRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Models\City;
+use App\Models\Country;
 use App\Models\User;
 use App\Services\UserService;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -24,8 +27,7 @@ class DashboardUserController extends Controller
      */
     public function index()
     {
-        $stats = $this->userService->getStatistics();
-        return view('dashboard.users.index', compact('stats'));
+        return view('dashboard.users.index');
     }
 
     /**
@@ -33,61 +35,7 @@ class DashboardUserController extends Controller
      */
     public function datatable(Request $request)
     {
-        $filters = [
-            'search' => $request->input('search.value'),
-            'verified' => $request->input('verified'),
-            'active' => $request->input('active'),
-            'blocked' => $request->input('blocked'),
-            'country_id' => $request->input('country_id'),
-            'city_id' => $request->input('city_id'),
-            'role' => $request->input('role'),
-            'has_products' => $request->input('has_products'),
-        ];
-
         $query = User::with(['country', 'city'])->withCount('products');
-
-        // Apply filters
-        if (!empty($filters['search'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('first_name', 'like', "%{$filters['search']}%")
-                    ->orWhere('last_name', 'like', "%{$filters['search']}%")
-                    ->orWhere('email', 'like', "%{$filters['search']}%")
-                    ->orWhere('phone_number', 'like', "%{$filters['search']}%");
-            });
-        }
-
-        if ($filters['verified'] === '1') {
-            $query->whereNotNull('email_verified_at');
-        } elseif ($filters['verified'] === '0') {
-            $query->whereNull('email_verified_at');
-        }
-
-        if ($filters['active'] === '1') {
-            $query->where('is_active', true);
-        } elseif ($filters['active'] === '0') {
-            $query->where('is_active', false);
-        }
-
-        if ($filters['blocked'] === '1') {
-            $query->whereNotNull('blocked_until')
-                ->where('blocked_until', '>', Carbon::now());
-        }
-
-        if (!empty($filters['country_id'])) {
-            $query->where('country_id', $filters['country_id']);
-        }
-
-        if (!empty($filters['city_id'])) {
-            $query->where('city_id', $filters['city_id']);
-        }
-
-        if (!empty($filters['role'])) {
-            $query->role($filters['role']);
-        }
-
-        if (!empty($filters['has_products'])) {
-            $query->has('products');
-        }
 
         return DataTables::of($query)
             ->addColumn('name', function (User $user) {
@@ -132,7 +80,8 @@ class DashboardUserController extends Controller
                 return $user->created_at->format('Y-m-d H:i');
             })
             ->addColumn('actions', function (User $user) {
-                // إنشاء الروابط
+
+                // links 
                 $viewUrl = route('admin.dashboard.users.show', $user);
                 $editUrl = route('admin.dashboard.users.edit', $user);
                 $deleteUrl = route('admin.dashboard.users.destroy', $user);
@@ -145,15 +94,15 @@ class DashboardUserController extends Controller
                 $verifyUrl = route('admin.dashboard.users.verify', $user);
                 $unverifyUrl = route('admin.dashboard.users.unverify', $user);
 
-                // بناء HTML للـ actions
+                // HTML for action
                 $html = '<div class="btn-group btn-group-sm" role="group">';
 
-                // زر View
+                // View
                 $html .= '<a href="' . $viewUrl . '" class="btn btn-info" title="View" data-bs-toggle="tooltip">
                         <i class="fas fa-eye"></i>
                       </a>';
 
-                // زر Edit
+                // Edit
                 $html .= '<a href="' . $editUrl . '" class="btn btn-primary" title="Edit" data-bs-toggle="tooltip">
                         <i class="fas fa-edit"></i>
                       </a>';
@@ -321,7 +270,9 @@ class DashboardUserController extends Controller
      */
     public function create()
     {
-        return view('dashboard.users.create');
+        $countries = Country::all();
+        $cities = collect(); // Empty collection for initial load
+        return view('dashboard.users.create', compact(['countries', 'cities']));
     }
 
     /**
@@ -504,21 +455,6 @@ class DashboardUserController extends Controller
     }
 
     /**
-     * Export users to CSV.
-     */
-    public function export(Request $request)
-    {
-        $filters = $request->only(['search', 'verified', 'active', 'blocked', 'country', 'city', 'role']);
-
-        $csvContent = $this->userService->exportToCsv($filters);
-
-        return response($csvContent, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="users-' . date('Y-m-d') . '.csv"',
-        ]);
-    }
-
-    /**
      * Get user's products via AJAX.
      */
     public function getProducts(User $user)
@@ -526,5 +462,10 @@ class DashboardUserController extends Controller
         $products = $this->userService->getUserProducts($user);
 
         return response()->json($products);
+    }
+
+    public function getCities(Country $country): JsonResponse
+    {
+        return response()->json($country->cities()->get(['id', 'name']));
     }
 }
