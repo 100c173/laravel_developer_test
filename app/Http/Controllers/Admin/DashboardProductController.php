@@ -53,7 +53,7 @@ class DashboardProductController extends Controller
 
                 if ($image) {
                     return '<div class="flex justify-center">
-                    <img src="' . asset($image->url) . '" 
+                    <img src=" ' . asset('storage/'.$image->image_path) . '" 
                          alt="' . htmlspecialchars($product->title, ENT_QUOTES) . '" 
                          class="primary-image">
                 </div>';
@@ -160,7 +160,7 @@ class DashboardProductController extends Controller
         $this->productService->update($product, $validated);
 
         return redirect()
-            ->route('products.edit', $product)
+            ->route('admin.dashboard.products.edit', $product)
             ->with('success', __('Product updated successfully'));
     }
 

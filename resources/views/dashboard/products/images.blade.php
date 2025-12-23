@@ -84,8 +84,10 @@
                             <div class="card border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 {{ $image->is_primary ? 'ring-2 ring-blue-500' : '' }}">
                                 {{-- Image --}}
                                 <div class="relative">
-                                    <img src="{{ $image->url }}" alt="{{ __('Product Image') }}"
-                                        class="w-full h-48 object-cover">
+                                    <img src="{{ asset('storage/'.$image->image_path) }}" alt="{{ __('Product Image') }}"
+                                        class="w-full h-48 object-cover"
+                                        loading="lazy"
+                                        >
 
                                     {{-- Primary Badge --}}
                                     @if($image->is_primary)

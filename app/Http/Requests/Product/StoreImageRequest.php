@@ -56,7 +56,7 @@ class StoreImageRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        // إذا كان الحقل images هو ملف واحد بدلاً من مصفوفة
+       // If the images field is a single file instead of an array
         if ($this->hasFile('images') && !is_array($this->file('images'))) {
             $this->merge([
                 'images' => [$this->file('images')]

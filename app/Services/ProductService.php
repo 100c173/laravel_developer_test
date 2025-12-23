@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Str;
 
 
 class ProductService
@@ -33,7 +34,7 @@ class ProductService
     {
         return $this->productRepository->update($product, $data);
     }
-       /**
+    /**
      * Add multiple images to product gallery.
      *
      * This method:
@@ -55,25 +56,19 @@ class ProductService
              * Each image is guaranteed to be an instance of UploadedFile.
              */
             foreach ($data['images'] as $image) {
+                //Special storage (raw)
+                $privatePath = $this->storePrivate($product, $image);
 
-                /**
-                 * Store image securely on the public disk.
-                 * Path is stored in database, not the file itself.
-                 */
-                $path = $image->store(
-                    'products',
-                    'public'
-                );
+                //Process + Copy to public
+                $publicPath = $this->publishImage($product, $privatePath);
 
-                /**
-                 * Persist gallery image record.
-                 * All images are non-primary by default.
-                 */
+                // Save the general path only
                 $this->productRepository->addImage(
                     $product,
-                    $path,
-                  
+                    $publicPath
                 );
+
+                Storage::disk('local')->delete($privatePath);
             }
         });
     }
@@ -96,13 +91,29 @@ class ProductService
         return $this->productRepository->deleteImage($image);
     }
 
-    /**
-     * Store image securely.
-     */
-    protected function storeImage(UploadedFile $image): string
+  
+    protected function publishImage(Product $product, string $privatePath): string
     {
-        return $image->store('products', 'public');
+        $filename = Str::uuid() . '.jpg';
+
+        $publicPath = 'products/' . $product->id . '/' . $filename;
+
+        Storage::disk('public')->put(
+            $publicPath,
+            Storage::disk('local')->get($privatePath)
+        );
+
+        return $publicPath;
     }
+
+    protected function storePrivate(Product $product, UploadedFile $image): string
+    {
+        return $image->store(
+            'products/raw/' . $product->id,
+            'local'
+        );
+    }
+
 
 }
 

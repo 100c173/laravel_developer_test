@@ -96,7 +96,7 @@
                                             <span class="text-muted">No image</span>
                                         @endif
                                     </td>
-                                    <td>{{ $product->name }}</td>
+                                    <td>{{ $product->title }}</td>
                                     <td>${{ number_format($product->price, 2) }}</td>
                                     <td>{{ $product->created_at->format('Y-m-d') }}</td>
                                 </tr>

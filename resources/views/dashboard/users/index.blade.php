@@ -13,12 +13,6 @@
                             <h4 class="mb-1">Users Management</h4>
                             <p class="text-muted mb-0">Manage user accounts and permissions</p>
                         </div>
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('admin.dashboard.users.create') }}" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>
-                                Add New User
-                            </a>
-                        </div>
                     </div>
                 </div>
 

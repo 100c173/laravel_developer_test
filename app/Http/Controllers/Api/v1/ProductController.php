@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\ProductService;
@@ -50,7 +51,7 @@ class ProductController extends Controller
     /**
      * Update product
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateProductRequest $request, int $id): JsonResponse
     {
         $product = Product::find($id);
 
@@ -58,7 +59,7 @@ class ProductController extends Controller
             return self::error('products.not_found', 404);
         }
 
-        $updatedProduct = $this->productService->update($product, $request->all());
+        $updatedProduct = $this->productService->update($product, $request->validated());
 
         return self::success($updatedProduct, 'products.updated_successfully');
     }
